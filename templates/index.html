@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Sentiment Analysis</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.0/dist/aos.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="static/js/angular.min.js"></script>
+</head>
+
+<body ng-app="myApp" ng-controller="demoCtrl" ng-cloak>
+    <div class="loader" ng-show="showLoader">
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+            <div class="double-bounce3"></div>
+        </div>  
+    </div> 
+	<div class="d-flex flex-column" style="min-height: 100vh;">
+    <div class="top-header">
+        <div class="container">
+        <i class="fa fa-bars d-lg-none" onclick="showMenu()"></i>
+        <img class="ml-2" src="static/img/logo.png" alt="">
+        <span class="logo-title">Sentiment Analysis</span>
+    </div>
+</div>
+    <div class="container-fluid hi-support flex-fill" style="margin-top: 10rem;">        
+        <div class="title-head">
+            <h2>Sentiment Analysis on News Article</h2>
+        </div>
+
+        <div class="container">
+            <div style="max-height: 200px; overflow: auto;">
+                <p align="center">
+                    This is a mobile-friendly web-app provides a simple UI to show the sentiment of the News
+                </p>
+            </div>
+            <div class="input-group mt-4">
+                <input type="text" class="form-control" ng-model="inputurl" ng-keyup="countKey()"  placeholder="Enter the  URL ..." 
+                aria-label="Enter the  URL ..."
+                    aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary btn-style" type="button" ng-click="validInput(inputurl, 'box')" >Go</button>
+                </div>
+
+            </div>
+            <span class="text-danger pl-4">{{'{{errormsg}}'}}</span>
+            <hr class="mt-5" ng-show="!hideDiv">
+        </div>
+      
+
+        <div class="container" >
+            <div class="row" style="margin-bottom: 30px;">
+                <div class="col-lg-3 side-menu" ng-show="!hideDiv">
+                    <div class="side-nav-holder">
+                        <div class="search-div">
+                            <div class="search-back">
+                                <input class="search-bar" type="text" ng-model="serchnews" placeholder="Search..">
+                                <i class="fa fa-search search-icon fa-fw"></i>
+                            </div>
+                        </div>
+                    <div class="side-nav">
+                        <nav class="navbar navbar-expand  flex-column align-items-start py-2">
+                            <div class="collapse navbar-collapse w-100 ">
+                                <ul class="flex-column  navbar-nav w-100 justify-content-between">
+                                    
+                                    <li class="nav-item" ng-repeat= "nav in navigation | filter: serchnews" 
+                                    ng-click="validInput(nav.url, 'navi')">
+                                        <a class="nav-link pl-0" href=""><i class="fa fa fa-newspaper-o fa-fw"></i>
+                                            <span class="d-inline">{{'{{nav.title}}'}}</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+                </div>
+                <div class="col-lg-9" ng-show="!hideDiv">
+                    <div class="out-box">
+                        <div class="col-md-12">
+                            <h4>{{'{{title}}'}}</h4>
+                        </div>
+                        <div class="row" data-aos="zoom-in">
+                            <div class="col-lg-5">
+                                <div class="fit-to-img mt-2">
+                                    <!-- <img src="static/img/paper.jpg" alt=""> -->
+                                    <img src="{{'{{image}}'}}" alt="">
+                                </div>
+                                <div class="date-time mt-3">Published <span class="font-weight-bold"> Date : </span>
+                                    {{'{{publish_date}}'}}</div>
+
+                                <div class="auther-name mt-2"><span class="font-weight-bold"><i
+                                            class="fa fa-user fa-fw"></i> </span> Auther Name</div>{{'{{authors}}'}}
+                            </div>
+                            <div class="col-lg-7">
+                                <h5 class="res-mt-3">Summarry</h5>
+                                <div class="summary mt-2">
+                                    {{'{{summary}}'}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row p0 mt-4" data-aos="zoom-in">
+                        <div class="col-lg-5">
+                                <div class="out-box">
+                                    <h5>Nouns</h5>
+                                    <div class="tablet ">
+                                        <div ng-repeat="noun in nouns">{{'{{noun}}'}}</div>
+                                    </div>
+                                    
+                            </div>
+                        </div>
+
+                        <div class="col-lg-7">
+                            <div class="out-box res-mt-2">
+                                <h5>Article Tone Result</h5>
+                                <div class="row tone-row1 mt-4">
+                                    <div class="col-2 text-center pl-0">
+                                        <img class="img-size" src="static/img/angry.png" alt="">
+                                    </div>
+                                    <div class="col-8 my-auto pl-0">
+                                       <h5>Anger &nbsp;&nbsp;<span ng-show="AngerScore>0"> ({{'{{AngerScore}}'}})</span></h5>
+                                    </div>
+                                    <div class="col-2">
+                                        <span ng-show="AngerScore>0"><i class="fa fa-check-circle anger" aria-hidden="true"></i></span>
+                                        <span ng-show="AngerScore==0"><i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                                <div class="row tone-row1 mt-4">
+                                    <div class="col-2 text-center pl-0">
+                                        <img class="img-size" src="static/img/fear.png" alt="">
+                                    </div>
+                                    <div class="col-8 my-auto pl-0">
+                                       <h5>Fear &nbsp;&nbsp;<span ng-show="fearScore>0"> ({{'{{fearScore}}'}})</span></h5>
+                                    </div>
+                                    <div class="col-2">
+                                        <span ng-show="fearScore>0"><i class="fa fa-check-circle fear" aria-hidden="true"></i></span>
+                                        <span ng-show="fearScore==0"><i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                                <div class="row tone-row1 mt-4">
+                                    <div class="col-2 text-center pl-0">
+                                        <img class="img-size" src="static/img/laughing.png" alt="">
+                                    </div>
+                                    <div class="col-8 my-auto pl-0">
+                                       <h5>Joy &nbsp;&nbsp;<span ng-show="joyScore>0"> ({{'{{joyScore}}'}})</span></h5>
+                                    </div>
+                                    <div class="col-2">
+                                        <span ng-show="joyScore>0"><i class="fa fa-check-circle joy" aria-hidden="true"></i></span>
+                                        <span ng-show="joyScore==0"><i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+                                <div class="row tone-row1 mt-4">
+                                    <div class="col-2 text-center pl-0">
+                                        <img class="img-size" src="static/img/sad.png" alt="">
+                                    </div>
+                                    <div class="col-8 my-auto pl-0">
+                                       <h5>Sadness &nbsp;&nbsp;<span ng-show="sadScore>0"> ({{'{{sadScore}}'}})</span></h5>
+                                    </div>
+                                    <div class="col-2">
+                                        <span ng-show="sadScore>0"><i class="fa fa-check-circle sadness" aria-hidden="true"></i>
+                                        </span>
+                                        <span ng-show="sadScore==0"><i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+
+                                <div class="row tone-row1 mt-4">
+                                    <div class="col-2 text-center pl-0">
+                                        <img class="img-size" src="static/img/analys.png" alt="">
+                                    </div>
+                                    <div class="col-8 my-auto pl-0">
+                                       <h5>Analytical &nbsp;&nbsp;<span ng-show="analyScore>0"> ({{'{{analyScore}}'}})</span></h5>
+                                    </div>
+                                    <div class="col-2">
+                                        <span ng-show="analyScore>0"><i class="fa fa-check-circle anlys" aria-hidden="true"></i></span>
+                                        <span ng-show="analyScore==0"><i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+
+                                <div class="row tone-row1 mt-4">
+                                    <div class="col-2 text-center pl-0">
+                                        <img class="img-size" src="static/img/happy.png" alt="">
+                                    </div>
+                                    <div class="col-8 my-auto pl-0">
+                                       <h5>Confitent &nbsp;&nbsp;<span ng-show="confiScore>0"> ({{'{{confiScore}}'}})</span></h5>
+                                    </div>
+                                    <div class="col-2">
+                                        <span ng-show="confiScore>0"><i class="fa fa-check-circle confident" aria-hidden="true"></i></span>
+                                        <span ng-show="confiScore==0"><i class="fa fa-times-circle " aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+
+                                <div class="row tone-row1 mt-4">
+                                    <div class="col-2 text-center pl-0">
+                                        <img class="img-size" src="static/img/Neutral.png" alt="">
+                                    </div>
+                                    <div class="col-8 my-auto pl-0">
+                                       <h5>Tentative &nbsp;&nbsp;<span ng-show="tentScore>0"> ({{'{{tentScore}}'}})</span></h5>
+                                    </div>
+                                    <div class="col-2">
+                                        <span  ng-show="tentScore>0"><i class="fa fa-check-circle tentative" aria-hidden="true"></i></span>
+                                        <span  ng-show="tentScore==0"><i class="fa fa-times-circle " aria-hidden="true"></i></span>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="row mt-5 out-box emoji-desc" data-aos="zoom-in" ng-show="!hideDiv">
+                    <h5>Sentence Tone Analysis Result</h5>
+                    <div class="col-12 my-4" ng-repeat="senttones in newSentencetones">
+                        <img class="img-size" ng-src="{{'{{senttones.img}}'}}" alt="">&nbsp; &nbsp; <span>{{'{{senttones.emoname}}'}}</span>
+                        <div class="description">
+                            {{'{{senttones.text}}'}}
+                        </div>
+                    </div>
+                    
+            </div>
+            <!-- ----------------------NER---------------------- -->
+
+            <div class="row my-5" ng-show="!hideDiv">
+                <div class="col-lg-3 ner-box">
+                    <div class="out-box" data-aos="zoom-in">
+                        <img class="ner-icon" src="static/img/location.png" alt="">
+                        <div class="ner-tablet">
+                            <h5 class="mt-4 text-center">Locations</h5>
+                            <div class="tablet-ner">
+                                <div ng-repeat="loc in nerLocs">{{'{{loc.GPE}}'}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 ner-box mt-5 mt-lg-0 ">
+                    <div class="out-box" data-aos="zoom-in">
+                        <img class="ner-icon" src="static/img/org.png" alt="">
+                        <div class="ner-tablet">
+                            <h5 class="mt-4 text-center">Organisations</h5>
+                            <div class="tablet-ner">
+                                <div ng-repeat="org in nerOrgs">{{'{{org.ORG}}'}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 ner-box mt-5 mt-lg-0">
+                    <div class="out-box" data-aos="zoom-in">
+                        <img class="ner-icon" src="static/img/user.png" alt="">
+                        <div class="ner-tablet">
+                            <h5 class="mt-4 text-center">Persons</h5>
+                            <div class="tablet-ner">
+                                <div ng-repeat="per in nerPers">{{'{{per.PERSON}}'}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 ner-box mt-5 mt-lg-0">
+                    <div class="out-box" data-aos="zoom-in">
+                        <img class="ner-icon" src="static/img/other.png" alt="">
+                        <div class="ner-tablet">
+                            <h5 class="mt-4 text-center">Others</h5>
+                            <div class="tablet-ner">
+                                <div ng-repeat="othr in nerOthrs">{{'{{othr}}'}}</div>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <section class="footer-section">
+			<div class="footer-logo">
+                <img src="static/img/logo.png" alt="">
+            </div>
+            <div>
+                <p>
+                    Designed and built by the sentient.io (Engineering Phase-1) team.
+                </p>
+            </div>
+            
+        </section>
+    </footer>
+</div>
+</body>
+<script src="https://unpkg.com/aos@2.3.0/dist/aos.js"></script>
+<script src="static/controller/myApp.js"></script>
+<script src="static/controller/demo.js"></script>
+<script>
+   $(function() {
+        AOS.init({
+      duration: 1200,
+    })
+    });
+
+    function showMenu(){
+        $('.side-menu').toggleClass('show-side-menu');
+    }
+
+    $(document).ready(function(){
+        $('.nav-item').click(function() {
+            $( '.nav-item' ).removeClass( "nav-item selected-news" ); // remove active class from all li 
+            $(this).addClass('nav-item selected-news'); // add active class for click li
+        });
+    });
+     function focuse(eve){
+        $('.selected-news').removeClass('active')
+        $(eve).addClass('active');
+
+    }
+</script>
+
+</html>
