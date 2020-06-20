@@ -1,4 +1,4 @@
-# sentiment-analysis-new-article
+# sentiment-analysis-news-article
 
 #### Prerequisites
 
