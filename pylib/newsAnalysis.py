@@ -96,7 +96,7 @@ def spciySent(txt):
 def toneAnaysis(summary):
     try:
         sentUrl = 'https://apis.sentient.io/microservices/utility/IBMSA/v1.0/getresults'
-        headersSent = {'Content-Type': 'application/json', 'x-api-key':'OaYpCkgRDn1DBbh4HGO4m4fKaX4RrX82tqepCb3d'}
+        headersSent = {'Content-Type': 'application/json', 'x-api-key':'40DA0290615043F8BB73'}
         data = {"key":summary}
         resp = requests.post(sentUrl, headers=headersSent, data=json.dumps(data))
         sentimentRes = json.loads(resp.content.decode('utf-8'))
